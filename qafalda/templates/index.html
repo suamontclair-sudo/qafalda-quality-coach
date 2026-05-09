@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QAfalda — Coach de Qualidade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div>
+          <h1>QAfalda</h1>
+          <p>Apoiadora de estudos CTFL</p>
+        </div>
+        <img src="{{ url_for('static', filename='images/mafalda.jpg') }}" alt="Mafalda" class="mafalda-image" />
+        <nav class="nav-links">
+          <a href="/temas" class="nav-link">Temas</a>
+          <a href="/dicas" class="nav-link">Dicas</a>
+          <a href="/quiz" class="nav-link">Quiz</a>
+        </nav>
+      </header>
+      <main>
+        <section class="chat-card">
+          <div class="chat-messages" id="chat-messages">
+            {% if messages %}
+              {% for message in messages %}
+                {% if message.role == 'assistant' %}
+                  <div class="bubble bot">
+                    <img src="{{ url_for('static', filename='images/mafalda.jpg') }}" alt="Mafalda" class="bubble-avatar" />
+                    <div>
+                      <strong>QAfalda</strong>
+                      <p>{{ message.content }}</p>
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="bubble user">
+                    <strong>Você</strong>
+                    <p>{{ message.content }}</p>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <div class="bubble bot">
+                <img src="{{ url_for('static', filename='images/mafalda.jpg') }}" alt="Mafalda" class="bubble-avatar" />
+                <div>
+                  <strong>QAfalda</strong>
+                  <p>Olá QA! Qual tema vamos falar hoje?</p>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          <form method="post" class="prompt-form" id="chat-form">
+            <input
+              id="chat-input"
+              name="question"
+              class="prompt-input"
+              placeholder="Digite sua dúvida aqui..."
+              autocomplete="off"
+              autofocus
+            />
+            <button type="submit">Enviar</button>
+          </form>
+        </section>
+      </main>
+      <div class="mascot-widget" id="mascot-widget" title="Clique para ver sugestões de assunto">
+        <div class="glasses-icon" aria-hidden="true">
+          <span class="glass left"></span>
+          <span class="bridge"></span>
+          <span class="glass right"></span>
+        </div>
+        <div class="mascot-menu" id="mascot-menu">
+          {% for topic in suggestions %}
+          <button type="button" class="topic-chip" onclick="chooseTopic(event, {{ topic|tojson }})">{{ topic }}</button>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <script>
+      // Scroll to bottom of chat messages
+      const chatMessages = document.getElementById('chat-messages');
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      const mascotWidget = document.getElementById('mascot-widget');
+      const mascotMenu = document.getElementById('mascot-menu');
+      mascotWidget.addEventListener('click', () => {
+        const isOpen = mascotWidget.classList.toggle('open');
+        if (isOpen) {
+          mascotMenu.style.opacity = '1';
+          mascotMenu.style.transform = 'translateY(0)';
+          mascotMenu.style.pointerEvents = 'auto';
+        } else {
+          mascotMenu.style.opacity = '0';
+          mascotMenu.style.transform = 'translateY(10px)';
+          mascotMenu.style.pointerEvents = 'none';
+        }
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!mascotWidget.contains(event.target)) {
+          mascotWidget.classList.remove('open');
+          mascotMenu.style.opacity = '0';
+          mascotMenu.style.transform = 'translateY(10px)';
+          mascotMenu.style.pointerEvents = 'none';
+        }
+      });
+
+      function chooseTopic(event, topic) {
+        event.stopPropagation();
+        const input = document.getElementById('chat-input');
+        if (input) {
+          input.value = topic;
+          input.focus();
+        }
+      }
+    </script>
+  </body>
+</html>

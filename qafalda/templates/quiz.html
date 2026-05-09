@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quiz — QAfalda</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div>
+          <div class="mafalda-avatar"></div>
+          <h1>Quiz da QAfalda</h1>
+          <p>Vamos testar seus conhecimentos sobre qualidade de software? É só escolher a resposta certa!</p>
+        </div>
+        <nav class="nav-links">
+          <a href="/" class="nav-link">Chat</a>
+          <a href="/temas" class="nav-link">Temas</a>
+          <a href="/dicas" class="nav-link">Dicas</a>
+        </nav>
+      </header>
+      <main>
+        <section class="chat-card">
+          {% if feedback %}
+          <div class="bubble bot">
+            <strong>QAfalda</strong>
+            <p>{{ feedback }}</p>
+          </div>
+          <div class="actions">
+            <a href="/quiz" class="btn">Próxima pergunta</a>
+            <a href="/dicas" class="btn">Ver dica</a>
+          </div>
+          {% else %}
+          <div class="bubble bot">
+            <strong>QAfalda</strong>
+            <p>{{ question }}</p>
+          </div>
+          <form method="post" class="quiz-form">
+            <input type="hidden" name="question" value="{{ question }}" />
+            <input type="hidden" name="correct" value="{{ correct }}" />
+            {% for option in options %}
+            <label class="option">
+              <input type="radio" name="answer" value="{{ option }}" required />
+              {{ option }}
+            </label>
+            {% endfor %}
+            <button type="submit" class="btn">Responder</button>
+          </form>
+          {% endif %}
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
